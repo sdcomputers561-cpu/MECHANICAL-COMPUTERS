@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PC Parts Store | MECHANICAL COMPUTERS</title>
+<style>
+body{margin:0;font-family:Arial;background:#f2f2f2}
+/* HEADER */
+header{background:#111;color:#fff;padding:10px 20px;display:flex;align-items:center;gap:20px}
+.logo{font-size:22px;font-weight:bold;color:#00c6ff}
+.search{flex:1}
+.search input{width:100%;padding:8px;border-radius:4px;border:none}
+.cart{cursor:pointer}
+/* LAYOUT */
+.main{display:flex}
+.sidebar{width:220px;background:#fff;padding:15px}
+.sidebar h3{margin-top:0}
+.sidebar li{list-style:none;padding:8px;cursor:pointer}
+.sidebar li:hover{background:#eee}
+.content{flex:1;padding:20px}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+/* CARD */
+.card{background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.card img{width:100%;height:150px;object-fit:contain}
+.card h4{font-size:14px;height:40px}
+.price{color:#d32f2f;font-weight:bold}
+button{background:#111;color:#fff;border:none;padding:6px 10px;width:100%;cursor:pointer}
+button:hover{background:#00c6ff}
+/* CART TOTAL */
+.cart-box{margin-top:10px;background:#fff;padding:10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+footer{text-align:center;padding:10px;background:#111;color:#fff;margin-top:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">MECHANICAL COMPUTERS</div>
+  <div class="search">
+    <input type="text" id="search" placeholder="Search products..." onkeyup="searchProduct()">
+  </div>
+  <div class="cart">🛒 Cart</div>
+</header>
+
+<div class="main">
+  <aside class="sidebar">
+    <h3>Categories</h3>
+    <li onclick="filter('All')">All</li>
+    <li onclick="filter('CPU')">CPU</li>
+    <li onclick="filter('GPU')">GPU</li>
+    <li onclick="filter('RAM')">RAM</li>
+    <li onclick="filter('Storage')">Storage</li>
+  </aside>
+
+  <section class="content">
+    <div class="products" id="products"></div>
+    <div class="cart-box" id="cart-box"></div>
+  </section>
+</div>
+
+<footer>© 2026 PC Parts Store</footer>
+
+<script>
+// PRODUCTS
+const products=[
+{
+ name:"Intel Core i5-12400F",
+ price:42000,
+ cat:"CPU",
+ img:"https://m.media-amazon.com/images/I/61k2iJ8nqUL._AC_SL1000_.jpg"
+},
+{
+ name:"AMD Ryzen 5 5600X",
+ price:48000,
+ cat:"CPU",
+ img:"https://m.media-amazon.com/images/I/61vGQNUEsGL._AC_SL1000_.jpg"
+},
+{
+ name:"NVIDIA gtx 1050 4GB",
+ price:35000,
+ cat:"GPU",
+ img:"https://m.media-amazon.com/images/I/71gQx0+P0WL._AC_SL1000_.jpg"
+},
+{
+ name:"8GB DDR4 RAM",
+ price:18000,
+ cat:"RAM",
+ img:"https://m.media-amazon.com/images/I/61d5QZ1E1DL._AC_SL1000_.jpg"
+},
+{
+ name:"1TB NVMe SSD",
+ price:22000,
+ cat:"Storage",
+ img:"https://m.media-amazon.com/images/I/71S8U9VzLTL._AC_SL1000_.jpg"
+}
+];
+
+let cart=[];
+
+// DISPLAY PRODUCTS
+function show(data){
+ const box=document.getElementById("products");
+ box.innerHTML="";
+ data.forEach((p,index)=>{
+  box.innerHTML+=`
+   <div class="card">
+     <img src="${p.img}">
+     <h4>${p.name}</h4>
+     <div class="price">Rs. ${p.price}</div>
+     <button onclick="addToCart(${index})">Add to Cart</button>
+   </div>`;
+ });
+}
+
+// FILTER
+function filter(cat){
+ if(cat==="All") show(products);
+ else show(products.filter(p=>p.cat===cat));
+}
+
+// SEARCH
+function searchProduct(){
+ const t=document.getElementById("search").value.toLowerCase();
+ show(products.filter(p=>p.name.toLowerCase().includes(t)));
+}
+
+// ADD TO CART
+function addToCart(index){
+ cart.push(products[index]);
+ renderCart();
+}
+
+// RENDER CART
+function renderCart(){
+ const box=document.getElementById("cart-box");
+ if(cart.length===0){
+  box.innerHTML="<b>Cart is empty</b>";
+  return;
+ }
+ let html="<b>Cart Items:</b><br>";
+ let total=0;
+ cart.forEach((item,i)=>{
+  html+=`${item.name} - Rs.${item.price} <button onclick="removeItem(${i})">Remove</button><br>`;
+  total+=item.price;
+ });
+ html+=`<b>Total: Rs.${total}</b><br><button onclick="checkout()">Checkout</button>`;
+ box.innerHTML=html;
+}
+
+// REMOVE ITEM
+function removeItem(i){
+ cart.splice(i,1);
+ renderCart();
+}
+
+// CHECKOUT
+function checkout(){
+ if(cart.length===0){alert("Cart empty!");return;}
+ alert("Order placed! Total Rs." + cart.reduce((a,b)=>a+b.price,0));
+ cart=[];
+ renderCart();
+}
+
+show(products);
+renderCart();
+</script>
+
+</body>
+</html>
